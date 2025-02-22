@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "ZerePy"
+name = "basket-agent-zerepy"
 version = "0.1.0"
 description = "A launch-pad for AI agents"
 authors = ["Ayoub Ed <ayoub@blorm.xyz>", "Efrain <ef@blorm.xyz>", "Max <max@blorm.xyz>"]
