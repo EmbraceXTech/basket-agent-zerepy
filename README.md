@@ -100,6 +100,20 @@ cd zerepy
 4. Install dependencies:
 
 ```bash
+python3 -m venv venv
+# On Unix or MacOS
+source venv/bin/activate
+# On Windows
+.\venv\Scripts\activate
+```
+
+```bash
+pip install -U pip setuptools
+pip install poetry
+```
+
+```bash
+poetry lock
 poetry install --no-root
 ```
 
