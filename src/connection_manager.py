@@ -2,6 +2,7 @@ import logging
 from typing import Any, List, Optional, Type, Dict
 from src.connections.base_connection import BaseConnection
 from src.connections.anthropic_connection import AnthropicConnection
+from src.connections.basket_connection import BasketConnection
 from src.connections.eternalai_connection import EternalAIConnection
 from src.connections.goat_connection import GoatConnection
 from src.connections.groq_connection import GroqConnection
@@ -31,6 +32,7 @@ class ConnectionManager:
         for config in agent_config:
             self._register_connection(config)
 
+    # TODO: map connection name to connection type
     @staticmethod
     def _class_name_to_type(class_name: str) -> Type[BaseConnection]:
         if class_name == "twitter":
@@ -73,6 +75,8 @@ class ConnectionManager:
             return EVMConnection
         elif class_name == "perplexity":
             return PerplexityConnection
+        elif class_name == "basket":
+            return BasketConnection
         return None
 
     def _register_connection(self, config_dic: Dict[str, Any]) -> None:

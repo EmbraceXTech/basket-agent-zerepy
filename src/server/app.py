@@ -107,6 +107,7 @@ class ZerePyServer:
         async def load_agent(name: str):
             """Load a specific agent"""
             try:
+                # TODO: can add cli to load agent config from other sources functions in cli.py
                 self.state.cli._load_agent_from_file(name)
                 return {
                     "status": "success",
