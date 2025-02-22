@@ -127,6 +127,14 @@ This will create a virtual environment and install all required dependencies.
 poetry run python main.py
 ```
 
+2. Run the server:
+
+```bash
+python main.py --server --host 0.0.0.0 --port 8000
+```
+
+
+
 ## Configure connections & launch an agent
 
 1. Configure your desired connections:

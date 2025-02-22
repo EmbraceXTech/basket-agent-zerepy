@@ -1,0 +1,46 @@
+services:
+  zerepy:
+    build: .
+    ports:
+      - "8000:8000"
+    networks:
+      - basket-agent-network
+    environment:
+      # LLM API Keys
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - ETERNALAI_API_KEY=${ETERNALAI_API_KEY}
+      - HYPERBOLIC_API_KEY=${HYPERBOLIC_API_KEY}
+      - GALADRIEL_API_KEY=${GALADRIEL_API_KEY}
+      - GROQ_API_KEY=${GROQ_API_KEY}
+      - TOGETHER_API_KEY=${TOGETHER_API_KEY}
+
+      # Social Platform Keys
+      - TWITTER_API_KEY=${TWITTER_API_KEY}
+      - TWITTER_API_SECRET=${TWITTER_API_SECRET}
+      - TWITTER_ACCESS_TOKEN=${TWITTER_ACCESS_TOKEN}
+      - TWITTER_ACCESS_SECRET=${TWITTER_ACCESS_SECRET}
+      - FARCASTER_RECOVERY_PHRASE=${FARCASTER_RECOVERY_PHRASE}
+      - ECHOCHAMBERS_API_KEY=${ECHOCHAMBERS_API_KEY}
+      - ECHOCHAMBERS_ENDPOINT=${ECHOCHAMBERS_ENDPOINT}
+      - DISCORD_TOKEN=${DISCORD_TOKEN}
+
+      # Blockchain Keys
+      - SOLANA_PRIVATE_KEY=${SOLANA_PRIVATE_KEY}
+      - ETH_PRIVATE_KEY=${ETH_PRIVATE_KEY}
+      - SONIC_PRIVATE_KEY=${SONIC_PRIVATE_KEY}
+
+      # Additional Configuration
+      - OLLAMA_BASE_URL=${OLLAMA_BASE_URL:-http://localhost:11434}
+
+    # volumes:
+    #   - .:/app
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+networks:
+  basket-agent-network:
+    driver: bridge
