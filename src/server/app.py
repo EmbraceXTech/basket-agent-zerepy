@@ -198,15 +198,12 @@ class ZerePyServer:
                 print(result)
                 if result.startswith("Error:"):
                     raise HTTPException(status_code=400, detail=result)
-                result_cleaned = result.strip().strip("```").strip()
+                result_cleaned = result.strip().strip("```").strip("json").strip()
+                
                 parsed_result = json.loads(result_cleaned)
                 return {"status": "success", "result": parsed_result}
             except Exception as e:
                 raise HTTPException(status_code=400, detail=str(e))
-            
-            
-            return {"status": "success", "result": "Consider trade from connection "}
-
         @self.app.post("/agent/start")
         async def start_agent():
             """Start the agent loop"""
