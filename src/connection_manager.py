@@ -181,13 +181,13 @@ class ConnectionManager:
                 logging.error(
                     f"\nError: Connection '{connection_name}' is not configured"
                 )
-                return None
+                return f"Error: Connection '{connection_name}' is not configured"
 
             if action_name not in connection.actions:
                 logging.error(
                     f"\nError: Unknown action '{action_name}' for connection '{connection_name}'"
                 )
-                return None
+                return f"Error: Unknown action '{action_name}' for connection '{connection_name}'"
 
             action = connection.actions[action_name]
 
@@ -212,7 +212,7 @@ class ConnectionManager:
                 logging.error(
                     f"\nError: Missing required parameters: {', '.join(missing_required)}"
                 )
-                return None
+                return f"Error: Missing required parameters: {', '.join(missing_required)}"
 
             return connection.perform_action(action_name, kwargs)
 
@@ -220,7 +220,7 @@ class ConnectionManager:
             logging.error(
                 f"\nAn error occurred while trying action {action_name} for {connection_name} connection: {e}"
             )
-            return None
+            return f"Error: An error occurred while trying action {action_name} for {connection_name} connection: {e}"
 
     def get_model_providers(self) -> List[str]:
         """Get a list of all LLM provider connections"""

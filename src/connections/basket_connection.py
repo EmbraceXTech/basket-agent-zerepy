@@ -2,7 +2,7 @@
 import logging
 import os
 from typing import Dict, Any
-from dotenv import load_dotenv, set_key
+from dotenv import load_dotenv
 from src.connections.base_connection import BaseConnection, Action, ActionParameter
 
 logger = logging.getLogger("connections.basket_connection")
@@ -37,10 +37,15 @@ class BasketConnection(BaseConnection):
     def register_actions(self) -> None:
         """Register available Basket actions"""
         self.actions = {
-            "consider-trade-steps": Action(
-                name="consider-trade-steps",
-                parameters=[ActionParameter("test3", True, str, "Test parameter"), ActionParameter("test", True, str, "Test parameter")],
-                description="Consider a trade based on the current market conditions and the agent's strategy."
+            "generate-trade-steps": Action(
+                name="generate-trade-steps",
+                parameters=[],
+                description="Consider a trade based on the current market conditions and the agent's strategy.",
+            ),
+            "test-action": Action(
+                name="test-action",
+                parameters=[ActionParameter("test", True, str, "Test parameter"), ActionParameter("test1", True, str, "Test parameter")],
+                description="Test action",
             )
         }
     def configure(self) -> bool:
@@ -89,12 +94,14 @@ class BasketConnection(BaseConnection):
                 logger.debug(f"Configuration check failed: {e}")
             return False
 
-    def consider_trade(self, test, test3, **kwargs) -> str:
+    def generate_trade_steps(self, **kwargs) -> str:
         try:
-            print(test)
-            print(test3)
-            return "Consider trade from connection " + test + test3
-          
+            return "Consider trade from connection "
+            
+        except Exception as e:
+            raise BasketConnectionError(f"Consider trade failed: {e}")
+
+    def test_action(self, test, test1, **kwargs) -> str:
         # get value from kwargs
         # value = kwargs.get('<key>')
         
@@ -104,20 +111,18 @@ class BasketConnection(BaseConnection):
         # perform other actions - ZerePy/src/agent.py
         # add other connections (connect with external services) to the agent - ZerePy/src/connection_manager.py and ZerePy/src/connections/...
         # agent.perform_action(connection_name="", action_name="generate-text", params=[])
-            
-        except Exception as e:
-            raise BasketConnectionError(f"Consider trade failed: {e}")
+        return "Test action from connection " + test + test1
 
     def perform_action(self, action_name: str, kwargs) -> Any:
         """Execute a Basket action with validation"""
         if action_name not in self.actions:
             raise KeyError(f"Unknown action: {action_name}")
 
-        action = self.actions[action_name]
+        action: Action = self.actions[action_name]
         errors = action.validate_params(kwargs)
         if errors:
-            raise ValueError(f"Invalid parameters: {', '.join(errors)}")
-
+            return f"Error: Invalid parameters: {', '.join(errors)}"
+        
         # Call the appropriate method based on action name
         method_name = action_name.replace('-', '_')
         method = getattr(self, method_name)

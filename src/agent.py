@@ -145,7 +145,7 @@ class ZerePyAgent:
             params=[prompt, system_prompt]
         )
 
-    def perform_action(self, connection: str, action: str, **kwargs) -> None:
+    def perform_action(self, connection: str, action: str, **kwargs) -> str:
         return self.connection_manager.perform_action(connection, action, **kwargs)
     
     def select_action(self, use_time_based_weights: bool = False) -> dict:

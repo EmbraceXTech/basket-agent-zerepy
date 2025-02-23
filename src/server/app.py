@@ -146,6 +146,8 @@ class ZerePyServer:
                     action=action_request.action,
                     params=action_request.params
                 )
+                if result.startswith("Error:"):
+                    raise HTTPException(status_code=400, detail=result + " in sequence")
                 return {"status": "success", "result": result}
             except Exception as e:
                 raise HTTPException(status_code=400, detail=str(e))
