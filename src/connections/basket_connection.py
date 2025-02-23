@@ -37,8 +37,8 @@ class BasketConnection(BaseConnection):
     def register_actions(self) -> None:
         """Register available Basket actions"""
         self.actions = {
-            "consider-trade": Action(
-                name="consider-trade",
+            "consider-trade-steps": Action(
+                name="consider-trade-steps",
                 parameters=[ActionParameter("test3", True, str, "Test parameter"), ActionParameter("test", True, str, "Test parameter")],
                 description="Consider a trade based on the current market conditions and the agent's strategy."
             )

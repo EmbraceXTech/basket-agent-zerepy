@@ -3,7 +3,7 @@ import time,threading
 from src.action_handler import register_action
 from src.helpers import print_h_bar
 
-@register_action("consider-trade")
+@register_action("consider-trade-steps")
 def consider_trade(agent, test, **kwargs):
   """
   Consider a trade based on the current market conditions and the agent's strategy.
