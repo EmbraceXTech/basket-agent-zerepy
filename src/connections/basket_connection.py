@@ -96,6 +96,10 @@ class BasketConnection(BaseConnection):
 
     def generate_trade_steps(self, **kwargs) -> str:
         try:
+            print(kwargs)
+            # call openai connection
+            # result = self.perform_action("openai", "generate_text", prompt="Hello, What your name?", system_prompt="My name is John Doe. You are a helpful assistant.")
+            # print('result', result)
             return "Consider trade from connection "
             
         except Exception as e:

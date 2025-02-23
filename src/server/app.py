@@ -1,3 +1,4 @@
+import json
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 
 from pydantic import BaseModel
@@ -8,6 +9,7 @@ import signal
 import threading
 from pathlib import Path
 from src.cli import ZerePyCLI
+from src.basket_prompts import system_message, create_user_message
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("server/app")
@@ -17,6 +19,28 @@ class ActionRequest(BaseModel):
     connection: str
     action: str
     params: Optional[List[str]] = []
+    
+class Knowledge(BaseModel):
+    """Request model for knowledge"""
+    name: str
+    content: str
+class Token(BaseModel):
+    """Request model for token"""
+    tokenSymbol: str
+    tokenAddress: str
+    price: float
+class TokenTradeAmount(BaseModel):
+    """Request model for token trade amount"""
+    tokenSymbol: str
+    tokenAddress: str
+    amount: float
+
+class GenerateTradeStepsRequest(BaseModel):
+    """Request model for generating trade steps"""
+    strategyDescription: str
+    tokensSelected: List[Token]
+    tokensTradeAmount: List[TokenTradeAmount]
+    knowledges: List[Knowledge]
 
 class ConfigureRequest(BaseModel):
     """Request model for configuring connections"""
@@ -144,13 +168,44 @@ class ZerePyServer:
                     self.state.cli.agent.perform_action,
                     connection=action_request.connection,
                     action=action_request.action,
-                    params=action_request.params
+                    params=action_request.params,
                 )
                 if result.startswith("Error:"):
-                    raise HTTPException(status_code=400, detail=result + " in sequence")
+                    raise HTTPException(status_code=400, detail=result)
                 return {"status": "success", "result": result}
             except Exception as e:
                 raise HTTPException(status_code=400, detail=str(e))
+            
+        @self.app.post("/agent/generate-trade-steps")
+        async def generate_trade_steps(params: GenerateTradeStepsRequest):
+            """Generate trade steps"""
+            # if not self.state.cli.agent:
+            #     raise HTTPException(status_code=400, detail="No agent loaded")
+            self.state.cli._load_agent_from_file("basket")
+            
+            user_message = create_user_message(params.strategyDescription, params.knowledges, params.tokensSelected, params.tokensTradeAmount)
+            print(user_message)
+            try:
+                result = await asyncio.to_thread(
+                    self.state.cli.agent.perform_action,
+                    connection="openai",
+                    action="generate-text",
+                    params= [
+                        user_message,
+                        system_message,
+                    ]
+                )
+                print(result)
+                if result.startswith("Error:"):
+                    raise HTTPException(status_code=400, detail=result)
+                result_cleaned = result.strip().strip("```").strip()
+                parsed_result = json.loads(result_cleaned)
+                return {"status": "success", "result": parsed_result}
+            except Exception as e:
+                raise HTTPException(status_code=400, detail=str(e))
+            
+            
+            return {"status": "success", "result": "Consider trade from connection "}
 
         @self.app.post("/agent/start")
         async def start_agent():
